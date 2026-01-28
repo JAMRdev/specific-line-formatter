@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formateador de Listas | Modo Oscuro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        // Configuración inicial del tema
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        textarea {
+            resize: none;
+        }
+        /* Animación para la notificación */
+        #notification {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        #notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center py-10 px-4 transition-colors duration-300">
+
+    <!-- Botón de Modo Oscuro -->
+    <div class="w-full max-w-4xl flex justify-end mb-4">
+        <button id="themeToggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+            <svg id="sunIcon" class="hidden w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <svg id="moonIcon" class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+        </button>
+    </div>
+
+    <div class="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 custom-shadow">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Formateador de Listas</h1>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Pega tus líneas abajo. Añadiremos comas inteligentes evitando duplicados y líneas vacías.</p>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Entrada -->
+            <div class="flex flex-col">
+                <label class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
+                    Entrada (Pegar aquí)
+                    <span class="text-xs font-normal text-slate-400">Ctrl + V</span>
+                </label>
+                <textarea 
+                    id="inputText" 
+                    placeholder="Pega tu lista aquí..."
+                    class="w-full h-64 p-4 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700"
+                ></textarea>
+            </div>
+
+            <!-- Salida -->
+            <div class="flex flex-col">
+                <label class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
+                    Resultado
+                    <span class="text-xs font-normal text-slate-400">Ctrl + C</span>
+                </label>
+                <textarea 
+                    id="outputText" 
+                    placeholder="El resultado aparecerá aquí..."
+                    readonly
+                    class="w-full h-64 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 outline-none cursor-default"
+                ></textarea>
+            </div>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-4 justify-center">
+            <button 
+                onclick="processText()"
+                class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors flex items-center gap-2 shadow-sm"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                </svg>
+                Procesar
+            </button>
+
+            <button 
+                onclick="copyToClipboard()"
+                class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors flex items-center gap-2 shadow-sm"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
+                    <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
+                </svg>
+                Copiar
+            </button>
+
+            <button 
+                onclick="clearAll()"
+                class="px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 font-medium rounded-xl transition-colors border border-slate-200 dark:border-slate-700"
+            >
+                Limpiar
+            </button>
+        </div>
+    </div>
+
+    <!-- Notificación personalizada -->
+    <div id="notification" class="fixed bottom-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 z-50">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+        </svg>
+        <span class="font-medium">¡Copiado con éxito!</span>
+    </div>
+
+    <script>
+        const inputArea = document.getElementById('inputText');
+        const outputArea = document.getElementById('outputText');
+        const notification = document.getElementById('notification');
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+
+        // Lógica de Modo Oscuro
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        }
+
+        // Inicializar tema al cargar
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            sunIcon.classList.remove('hidden');
+            moonIcon.classList.add('hidden');
+        }
+
+        themeToggle.addEventListener('click', toggleDarkMode);
+
+        // Lógica de procesamiento de texto mejorada
+        inputArea.addEventListener('input', processText);
+
+        function processText() {
+            const rawText = inputArea.value;
+            if (!rawText.trim() && rawText === "") {
+                outputArea.value = '';
+                return;
+            }
+
+            const lines = rawText.split(/\r?\n/);
+            
+            const processedLines = lines.map((line, index) => {
+                const trimmed = line.trim();
+                
+                // 1. Si es la última línea, devolvemos el texto limpio sin añadir nada más
+                if (index === lines.length - 1) {
+                    return trimmed;
+                }
+
+                // 2. Si la línea está vacía o solo tiene espacios, la dejamos vacía (sin coma)
+                if (trimmed === "") {
+                    return "";
+                }
+
+                // 3. Si la línea ya termina en coma, no añadimos otra
+                if (trimmed.endsWith(',')) {
+                    return trimmed;
+                }
+
+                // 4. En cualquier otro caso (no es la última, tiene contenido y no tiene coma), la añadimos
+                return trimmed + ',';
+            });
+
+            outputArea.value = processedLines.join('\n');
+        }
+
+        function copyToClipboard() {
+            if (!outputArea.value) return;
+
+            outputArea.select();
+            outputArea.setSelectionRange(0, 99999);
+
+            try {
+                document.execCommand('copy');
+                showNotification();
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+            }
+            
+            window.getSelection().removeAllRanges();
+        }
+
+        function showNotification() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 2000);
+        }
+
+        function clearAll() {
+            inputArea.value = '';
+            outputArea.value = '';
+            inputArea.focus();
+        }
+
+        // Detectar copia por teclado
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                if (document.activeElement === outputArea && outputArea.value) {
+                    showNotification();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
