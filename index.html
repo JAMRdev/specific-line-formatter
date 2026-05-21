@@ -48,7 +48,7 @@
     <div class="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 custom-shadow">
         <header class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Formateador de Listas</h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm">Pega tus líneas abajo. Añadiremos comas inteligentes evitando duplicados y líneas vacías.</p>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Pega tus líneas abajo. Puedes formatearlas en secuencia vertical u horizontal.</p>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -80,7 +80,21 @@
             </div>
         </div>
 
-        <div class="mt-8 flex flex-wrap gap-4 justify-center">
+        <div class="mt-8 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 p-4">
+            <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3 text-center">Formato de salida</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                <label class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <input type="radio" name="formatMode" value="vertical" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Secuencia vertical</span>
+                </label>
+                <label class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <input type="radio" name="formatMode" value="horizontal" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Secuencia horizontal</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-4 justify-center">
             <button 
                 onclick="processText()"
                 class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors flex items-center gap-2 shadow-sm"
@@ -122,6 +136,7 @@
     <script>
         const inputArea = document.getElementById('inputText');
         const outputArea = document.getElementById('outputText');
+        const formatModeInputs = document.querySelectorAll('input[name="formatMode"]');
         const notification = document.getElementById('notification');
         const themeToggle = document.getElementById('themeToggle');
         const sunIcon = document.getElementById('sunIcon');
@@ -153,6 +168,7 @@
 
         // Lógica de procesamiento de texto mejorada
         inputArea.addEventListener('input', processText);
+        formatModeInputs.forEach((input) => input.addEventListener('change', processText));
 
         function processText() {
             const rawText = inputArea.value;
@@ -161,11 +177,24 @@
                 return;
             }
 
-            const lines = rawText.split(/\r?\n/);
-            
+            const selectedFormat = document.querySelector('input[name="formatMode"]:checked').value;
+            const lines = rawText.split(/
+?
+/);
+
+            if (selectedFormat === 'horizontal') {
+                const processedItems = lines
+                    .map((line) => line.trim())
+                    .filter((line) => line !== "")
+                    .map((line) => line.replace(/,+$/, ''));
+
+                outputArea.value = processedItems.join(', ');
+                return;
+            }
+
             const processedLines = lines.map((line, index) => {
                 const trimmed = line.trim();
-                
+
                 // 1. Si es la última línea, devolvemos el texto limpio sin añadir nada más
                 if (index === lines.length - 1) {
                     return trimmed;
@@ -185,7 +214,8 @@
                 return trimmed + ',';
             });
 
-            outputArea.value = processedLines.join('\n');
+            outputArea.value = processedLines.join('
+');
         }
 
         function copyToClipboard() {
