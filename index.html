@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formateador de Listas | Modo Oscuro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Configuración inicial del tema
         tailwind.config = {
-            darkMode: 'class',
-        }
+            darkMode: 'class'
+        };
     </script>
     <style>
         body {
@@ -23,11 +22,11 @@
         textarea {
             resize: none;
         }
-        /* Animación para la notificación */
         #notification {
             transition: transform 0.3s ease, opacity 0.3s ease;
             transform: translateY(100px);
             opacity: 0;
+            pointer-events: none;
         }
         #notification.show {
             transform: translateY(0);
@@ -37,66 +36,75 @@
 </head>
 <body class="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col items-center py-10 px-4 transition-colors duration-300">
 
-    <!-- Botón de Modo Oscuro -->
     <div class="w-full max-w-4xl flex justify-end mb-4">
-        <button id="themeToggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-            <svg id="sunIcon" class="hidden w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            <svg id="moonIcon" class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
+        <button id="themeToggle" type="button" class="p-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors" aria-label="Cambiar modo oscuro">
+            <svg id="sunIcon" class="hidden w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            <svg id="moonIcon" class="w-6 h-6 text-slate-700 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+            </svg>
         </button>
     </div>
 
-    <div class="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 custom-shadow">
+    <main class="w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 custom-shadow">
         <header class="mb-8 text-center">
             <h1 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Formateador de Listas</h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm">Pega tus líneas abajo. Puedes formatearlas en secuencia vertical u horizontal.</p>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Pega tus líneas abajo. Añadiremos comas inteligentes evitando duplicados y líneas vacías.</p>
         </header>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Entrada -->
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col">
-                <label class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
+                <label for="inputText" class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
                     Entrada (Pegar aquí)
                     <span class="text-xs font-normal text-slate-400">Ctrl + V</span>
                 </label>
-                <textarea 
-                    id="inputText" 
+                <textarea
+                    id="inputText"
                     placeholder="Pega tu lista aquí..."
                     class="w-full h-64 p-4 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800 focus:bg-white dark:focus:bg-slate-700"
                 ></textarea>
             </div>
 
-            <!-- Salida -->
             <div class="flex flex-col">
-                <label class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
+                <label for="outputText" class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 flex justify-between">
                     Resultado
                     <span class="text-xs font-normal text-slate-400">Ctrl + C</span>
                 </label>
-                <textarea 
-                    id="outputText" 
+                <textarea
+                    id="outputText"
                     placeholder="El resultado aparecerá aquí..."
                     readonly
                     class="w-full h-64 p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 outline-none cursor-default"
                 ></textarea>
             </div>
-        </div>
+        </section>
 
-        <div class="mt-8 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 p-4">
-            <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3 text-center">Formato de salida</p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <label class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                    <input type="radio" name="formatMode" value="vertical" checked class="w-4 h-4 text-blue-600 focus:ring-blue-500">
-                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Secuencia vertical</span>
+        <section class="mt-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700">
+            <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-3">Formato de salida</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <input type="radio" name="formatMode" value="vertical" checked class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                    <span>
+                        <span class="block text-sm font-medium text-slate-700 dark:text-slate-200">Secuencia vertical</span>
+                        <span class="block text-xs text-slate-400">Un elemento por línea, con comas.</span>
+                    </span>
                 </label>
-                <label class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                    <input type="radio" name="formatMode" value="horizontal" class="w-4 h-4 text-blue-600 focus:ring-blue-500">
-                    <span class="text-sm font-medium text-slate-700 dark:text-slate-200">Secuencia horizontal</span>
+
+                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <input type="radio" name="formatMode" value="horizontal" class="h-4 w-4 text-blue-600 focus:ring-blue-500">
+                    <span>
+                        <span class="block text-sm font-medium text-slate-700 dark:text-slate-200">Secuencia horizontal</span>
+                        <span class="block text-xs text-slate-400">Todo en una línea, separado por comas.</span>
+                    </span>
                 </label>
             </div>
-        </div>
+        </section>
 
-        <div class="mt-6 flex flex-wrap gap-4 justify-center">
-            <button 
-                onclick="processText()"
+        <section class="mt-8 flex flex-wrap gap-4 justify-center">
+            <button
+                id="processButton"
+                type="button"
                 class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors flex items-center gap-2 shadow-sm"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -105,8 +113,9 @@
                 Procesar
             </button>
 
-            <button 
-                onclick="copyToClipboard()"
+            <button
+                id="copyButton"
+                type="button"
                 class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition-colors flex items-center gap-2 shadow-sm"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -116,127 +125,145 @@
                 Copiar
             </button>
 
-            <button 
-                onclick="clearAll()"
+            <button
+                id="clearButton"
+                type="button"
                 class="px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 font-medium rounded-xl transition-colors border border-slate-200 dark:border-slate-700"
             >
                 Limpiar
             </button>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- Notificación personalizada -->
     <div id="notification" class="fixed bottom-10 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 z-50">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
         </svg>
-        <span class="font-medium">¡Copiado con éxito!</span>
+        <span id="notificationText" class="font-medium">¡Copiado con éxito!</span>
     </div>
 
     <script>
         const inputArea = document.getElementById('inputText');
         const outputArea = document.getElementById('outputText');
-        const formatModeInputs = document.querySelectorAll('input[name="formatMode"]');
         const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
         const themeToggle = document.getElementById('themeToggle');
         const sunIcon = document.getElementById('sunIcon');
         const moonIcon = document.getElementById('moonIcon');
+        const processButton = document.getElementById('processButton');
+        const copyButton = document.getElementById('copyButton');
+        const clearButton = document.getElementById('clearButton');
+        const formatRadios = document.querySelectorAll('input[name="formatMode"]');
 
-        // Lógica de Modo Oscuro
+        function getSelectedFormatMode() {
+            const selected = document.querySelector('input[name="formatMode"]:checked');
+            return selected ? selected.value : 'vertical';
+        }
+
+        function updateThemeIcons() {
+            const isDark = document.documentElement.classList.contains('dark');
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        }
+
         function toggleDarkMode() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateThemeIcons();
+        }
+
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
                 document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
             }
+
+            updateThemeIcons();
         }
 
-        // Inicializar tema al cargar
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-            sunIcon.classList.remove('hidden');
-            moonIcon.classList.add('hidden');
+        function normalizeLine(line) {
+            return line.trim().replace(/,+\s*$/, '');
         }
 
-        themeToggle.addEventListener('click', toggleDarkMode);
+        function getCleanItems(rawText) {
+            return rawText
+                .split(/\r?\n/)
+                .map(normalizeLine)
+                .filter(Boolean);
+        }
 
-        // Lógica de procesamiento de texto mejorada
-        inputArea.addEventListener('input', processText);
-        formatModeInputs.forEach((input) => input.addEventListener('change', processText));
+        function processVertical(rawText) {
+            const lines = rawText.split(/\r?\n/);
 
-        function processText() {
-            const rawText = inputArea.value;
-            if (!rawText.trim() && rawText === "") {
-                outputArea.value = '';
-                return;
-            }
-
-            const selectedFormat = document.querySelector('input[name="formatMode"]:checked').value;
-            const lines = rawText.split(/
-?
-/);
-
-            if (selectedFormat === 'horizontal') {
-                const processedItems = lines
-                    .map((line) => line.trim())
-                    .filter((line) => line !== "")
-                    .map((line) => line.replace(/,+$/, ''));
-
-                outputArea.value = processedItems.join(', ');
-                return;
-            }
-
-            const processedLines = lines.map((line, index) => {
+            return lines.map((line, index) => {
                 const trimmed = line.trim();
 
-                // 1. Si es la última línea, devolvemos el texto limpio sin añadir nada más
+                if (trimmed === '') {
+                    return '';
+                }
+
                 if (index === lines.length - 1) {
-                    return trimmed;
+                    return trimmed.replace(/,+\s*$/, '');
                 }
 
-                // 2. Si la línea está vacía o solo tiene espacios, la dejamos vacía (sin coma)
-                if (trimmed === "") {
-                    return "";
-                }
-
-                // 3. Si la línea ya termina en coma, no añadimos otra
                 if (trimmed.endsWith(',')) {
                     return trimmed;
                 }
 
-                // 4. En cualquier otro caso (no es la última, tiene contenido y no tiene coma), la añadimos
                 return trimmed + ',';
-            });
-
-            outputArea.value = processedLines.join('
-');
+            }).join('\n');
         }
 
-        function copyToClipboard() {
+        function processHorizontal(rawText) {
+            const items = getCleanItems(rawText);
+            return items.join(', ');
+        }
+
+        function processText() {
+            const rawText = inputArea.value;
+
+            if (!rawText.trim()) {
+                outputArea.value = '';
+                return;
+            }
+
+            const mode = getSelectedFormatMode();
+            outputArea.value = mode === 'horizontal'
+                ? processHorizontal(rawText)
+                : processVertical(rawText);
+        }
+
+        async function copyToClipboard() {
             if (!outputArea.value) return;
 
-            outputArea.select();
-            outputArea.setSelectionRange(0, 99999);
-
             try {
-                document.execCommand('copy');
-                showNotification();
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(outputArea.value);
+                } else {
+                    outputArea.focus();
+                    outputArea.select();
+                    outputArea.setSelectionRange(0, outputArea.value.length);
+                    document.execCommand('copy');
+                    window.getSelection().removeAllRanges();
+                }
+
+                showNotification('¡Copiado con éxito!');
             } catch (err) {
                 console.error('Error al copiar: ', err);
+                showNotification('No se pudo copiar');
             }
-            
-            window.getSelection().removeAllRanges();
         }
 
-        function showNotification() {
+        function showNotification(message) {
+            notificationText.textContent = message;
             notification.classList.add('show');
-            setTimeout(() => {
+
+            clearTimeout(showNotification.timeoutId);
+            showNotification.timeoutId = setTimeout(() => {
                 notification.classList.remove('show');
             }, 2000);
         }
@@ -247,12 +274,23 @@
             inputArea.focus();
         }
 
-        // Detectar copia por teclado
+        initializeTheme();
+
+        themeToggle.addEventListener('click', toggleDarkMode);
+        inputArea.addEventListener('input', processText);
+        processButton.addEventListener('click', processText);
+        copyButton.addEventListener('click', copyToClipboard);
+        clearButton.addEventListener('click', clearAll);
+
+        formatRadios.forEach((radio) => {
+            radio.addEventListener('change', processText);
+        });
+
         document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-                if (document.activeElement === outputArea && outputArea.value) {
-                    showNotification();
-                }
+            const isCopyShortcut = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c';
+
+            if (isCopyShortcut && document.activeElement === outputArea && outputArea.value) {
+                showNotification('¡Copiado con éxito!');
             }
         });
     </script>
